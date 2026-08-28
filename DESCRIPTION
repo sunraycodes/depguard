@@ -1,0 +1,31 @@
+Package: depguard
+Title: Manifest-Based Dependency Conflict Detection for Sandboxed R
+        Sessions
+Version: 0.1.0
+Authors@R: c(
+    person("Samruddhi", "Amol Shah", email = "Samruddhishah.id@gmail.com", role = c("aut", "cre")),
+    person("Kartik", "Patel", email = "kartikpatel.id@gmail.com", role = "aut")
+    )
+Description: Provides lightweight, manifest-based checking of R package
+    dependencies (including transitive dependencies) against the currently
+    installed environment, without requiring a full project lockfile.
+    Designed for sandboxed or ephemeral notebook environments (e.g. Kaggle,
+    Colab, Binder) where 'renv'-style lockfile ownership is impractical.
+    Includes session snapshot/diff tools (building on 'sessioninfo') to
+    detect when an install silently changes the version of a package that
+    is already loaded, and optional single-package version rollback.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1
+Depends: R (>= 3.5)
+Imports: tools, utils, sessioninfo, cli
+Suggests: remotes, pak, testthat (>= 3.0.0), knitr, rmarkdown
+Config/testthat/edition: 3
+VignetteBuilder: knitr
+URL: https://github.com/sunraycodes/depguard
+BugReports: https://github.com/sunraycodes/depguard/issues
+NeedsCompilation: no
+Packaged: 2026-08-19 09:43:29 UTC; root
+Author: Your Name [aut, cre]
+Maintainer: Your Name <you@example.com>

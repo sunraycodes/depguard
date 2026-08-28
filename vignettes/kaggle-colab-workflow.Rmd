@@ -1,0 +1,103 @@
+---
+title: "Using depguard in Kaggle, Colab, and other sandboxed notebooks"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Using depguard in Kaggle, Colab, and other sandboxed notebooks}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  eval = FALSE
+)
+```
+
+## The problem
+
+Hosted, ephemeral R notebooks (Kaggle, Colab, Binder, and similar) ship with
+a large pre-installed set of packages at fixed versions. When you install an
+additional package, its dependencies can silently upgrade or downgrade a
+package that is already loaded elsewhere in your session -- breaking code
+further down the notebook with no install-time error.
+
+Tools like `renv` solve this well for projects you fully own and can persist,
+but assume you can write lockfiles and restore a private library. That
+often doesn't fit a throwaway, read-mostly notebook session. `depguard`
+fills the narrower gap: lightweight, local-first checks that work without
+lockfile ownership.
+
+## Workflow 1: snapshot before, diff after
+
+Run this before installing anything new:
+
+```{r}
+library(depguard)
+
+snap <- dep_snapshot()
+```
+
+Install what you need as usual:
+
+```{r}
+install.packages("someNewPackage")
+```
+
+Then check what changed:
+
+```{r}
+dep_diff(snap)
+```
+
+Packages that changed *and* are still loaded in your session are flagged
+`risk = "high"` -- these are the ones most likely to break code you've
+already run.
+
+## Workflow 2: declare a manifest
+
+If you know what your notebook needs up front, declare it once:
+
+```{r}
+dep_manifest(
+  dplyr = "1.1.4",
+  ggplot2 = "3.5.0",
+  quantmod = "0.4.26"
+)
+```
+
+Then, any time later in the session (or at the top of a rerun):
+
+```{r}
+dep_check()
+```
+
+This walks the transitive dependency tree of each declared package using
+only locally installed metadata (no network calls by default) and reports
+missing packages, version mismatches, and which top-level package pulled
+in each transitive dependency.
+
+## Workflow 3: one-shot health check
+
+If you just want a sensible default at the top of a notebook:
+
+```{r}
+dep_healthcheck()
+```
+
+This checks against a manifest if one exists, or falls back to capturing a
+baseline snapshot you can diff against later.
+
+## Fixing a conflict
+
+If a specific package got silently bumped and broke something, you can roll
+just that package back:
+
+```{r}
+dep_fix("stringr", "1.5.0")
+```
+
+This performs a single-package rollback only -- it does not resolve
+cascading conflicts the rollback might introduce elsewhere. For full
+dependency resolution, use `renv::restore()` or `pak`'s solver.
