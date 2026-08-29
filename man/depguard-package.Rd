@@ -28,13 +28,19 @@ appropriate mode automatically.
 \seealso{
 Useful links:
 \itemize{
-  \item \url{https://github.com/yourusername/depguard}
-  \item Report bugs at \url{https://github.com/yourusername/depguard/issues}
+  \item \url{https://github.com/sunraycodes/depguard}
+  \item Report bugs at \url{https://github.com/sunraycodes/depguard/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Your Name \email{you@example.com}
+\strong{Maintainer}: Samruddhi Amol Shah \email{Samruddhishah.id@gmail.com}
+
+Authors:
+\itemize{
+  \item Samruddhi Amol Shah \email{Samruddhishah.id@gmail.com}
+  \item Kartik Patel \email{kartikpatel.id@gmail.com}
+}
 
 }
 \keyword{internal}

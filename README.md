@@ -1,5 +1,8 @@
 # depguard
-
+<!-- badges: start -->
+  [![R-CMD-check](https://github.com/sunraycodes/depguard/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sunraycodes/depguard/actions/workflows/R-CMD-check.yaml)
+  <!-- badges: end -->
+  
 Manifest-based, transitive-aware dependency conflict detection for R, built
 for sandboxed and ephemeral notebook environments (Kaggle, Colab, Binder)
 where a full `renv` lockfile workflow doesn't fit.
