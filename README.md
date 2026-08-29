@@ -20,7 +20,7 @@ local-first checks that work without lockfile ownership.
 
 ```r
 # install.packages("remotes")
-remotes::install_github("yourusername/depguard")
+remotes::install_github("sunraycodes/depguard")
 ```
 
 ## Usage
