@@ -3,7 +3,7 @@ Title: Manifest-Based Dependency Conflict Detection for Sandboxed R
         Sessions
 Version: 0.1.0
 Authors@R: c(
-    person("Samruddhi", "Amol Shah", email = "Samruddhishah.id@gmail.com", role = c("aut", "cre")),
+    person("Samruddhi", "Amol Shah", email = "samruddhi10000@gmail.com", role = c("aut", "cre")),
     person("Kartik", "Patel", email = "kartikpatel.id@gmail.com", role = "aut")
     )
 Description: Provides lightweight, manifest-based checking of R package
