@@ -93,7 +93,7 @@ baseline snapshot you can diff against later.
 
 If a specific package got silently bumped and broke something, you can roll
 just that package back to a specific version:
-```{r , eval = FALSE}
+```{r , eval = FALSE} # nolint
 =======
 ```{r, eval = FALSE}
 dep_fix("stringr", "1.5.0")
