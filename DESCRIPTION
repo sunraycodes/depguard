@@ -3,8 +3,9 @@ Title: Manifest-Based Dependency Conflict Detection for Sandboxed R
         Sessions
 Version: 0.1.0
 Authors@R: c(
-    person("Samruddhi", "Amol Shah", email = "samruddhi10000@gmail.com", role = c("aut", "cre")),
-    person("Kartik", "Patel", email = "kartikpatel.id@gmail.com", role = "aut")
+    person("Samruddhi", "Amol Shah", email = "samruddhi.bitnbyte@gmail.com", role = c("aut", "cre")),
+    person("Kartik", "Patel", email = "kartikpatel.id@gmail.com", role = "aut"),
+    person("Amrit", "Pal", email = "amrit.pal@vit.ac.in", role = "ctb")
     )
 Description: Provides lightweight, manifest-based checking of R package
     dependencies (including transitive dependencies) against the currently
@@ -26,6 +27,6 @@ URL: https://github.com/sunraycodes/depguard
 BugReports: https://github.com/sunraycodes/depguard/issues
 NeedsCompilation: no
 Packaged: 2026-08-19 09:43:29 UTC; root
-Author: Your Name [aut, cre]
-Maintainer: Your Name <you@example.com>
+Author: Samruddhi Amol Shah [aut, cre]
+Maintainer: Samruddhi Amol Shah <samruddhi.bitnbyte@gmail.com>
 Config/roxygen2/version: 8.1.0
