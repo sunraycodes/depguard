@@ -26,6 +26,8 @@ on:
       id:
         description: 'Unique ID. You can leave this empty.'
         type: string
+  push:
+    branches: [main]
 
 jobs:
 
