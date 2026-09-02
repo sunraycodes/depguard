@@ -27,6 +27,4 @@ URL: https://github.com/sunraycodes/depguard
 BugReports: https://github.com/sunraycodes/depguard/issues
 NeedsCompilation: no
 Packaged: 2026-08-19 09:43:29 UTC; root
-Author: Samruddhi Amol Shah [aut, cre]
-Maintainer: Samruddhi Amol Shah <samruddhi.bitnbyte@gmail.com>
 Config/roxygen2/version: 8.1.0
