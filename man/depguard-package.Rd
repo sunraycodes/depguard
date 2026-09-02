@@ -34,12 +34,17 @@ Useful links:
 
 }
 \author{
-\strong{Maintainer}: Samruddhi Amol Shah \email{Samruddhishah.id@gmail.com}
+\strong{Maintainer}: Samruddhi Amol Shah \email{samruddhi.bitnbyte@gmail.com}
 
 Authors:
 \itemize{
-  \item Samruddhi Amol Shah \email{Samruddhishah.id@gmail.com}
+  \item Samruddhi Amol Shah \email{samruddhi.bitnbyte@gmail.com}
   \item Kartik Patel \email{kartikpatel.id@gmail.com}
+}
+
+Other contributors:
+\itemize{
+  \item Amrit Pal \email{amrit.pal@vit.ac.in} [contributor]
 }
 
 }
