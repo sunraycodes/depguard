@@ -11,6 +11,9 @@
 
 \item{...}{Ignored.}
 }
+\value{
+The \code{x} object, returned invisibly.
+}
 \description{
 Print a depguard snapshot
 }

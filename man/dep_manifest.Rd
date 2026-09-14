@@ -25,7 +25,7 @@ sandboxed or ephemeral notebook sessions where you don't own or persist
 the environment.
 }
 \examples{
-\dontrun{
-dep_manifest(dplyr = "1.1.4", ggplot2 = "3.5.0")
-}
+tmp <- tempfile(fileext = ".rds")
+dep_manifest(dplyr = "1.1.4", ggplot2 = "3.5.0", path = tmp)
+unlink(tmp)
 }

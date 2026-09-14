@@ -16,9 +16,6 @@ later call to \code{\link[=dep_diff]{dep_diff()}} can detect what an install sil
 This is a thin wrapper around \code{\link[sessioninfo:session_info]{sessioninfo::session_info()}}.
 }
 \examples{
-\dontrun{
 snap <- dep_snapshot()
-install.packages("someNewPkg")
 dep_diff(snap)
-}
 }

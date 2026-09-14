@@ -20,17 +20,11 @@ test_that("dep_check returns expected columns", {
 })
 
 test_that("check_one_package detects version mismatch", {
-  installed_db <- utils::installed.packages()
-  pkg <- rownames(installed_db)[1]
-  current_version <- installed_db[pkg, "Version"]
-
-  # Require a version far higher than what's installed
   row <- depguard:::check_one_package(
-    pkg = pkg,
+    pkg = "base",
     required = "999.999.999",
     depth = "direct",
-    required_by = NA_character_,
-    installed_db = installed_db
+    required_by = NA_character_
   )
 
   expect_equal(row$status, "mismatch")

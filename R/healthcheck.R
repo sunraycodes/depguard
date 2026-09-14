@@ -13,9 +13,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' dep_healthcheck()
-#' }
 dep_healthcheck <- function(path = default_manifest_path(), check_cran = FALSE) {
   if (file.exists(path)) {
     cli::cli_h2("depguard: checking environment against manifest")

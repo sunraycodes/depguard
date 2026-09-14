@@ -9,11 +9,8 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
 #' snap <- dep_snapshot()
-#' install.packages("someNewPkg")
 #' dep_diff(snap)
-#' }
 dep_snapshot <- function() {
   info <- sessioninfo::session_info(pkgs = "loaded")
   structure(

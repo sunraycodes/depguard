@@ -16,9 +16,9 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' dep_manifest(dplyr = "1.1.4", ggplot2 = "3.5.0")
-#' }
+#' tmp <- tempfile(fileext = ".rds")
+#' dep_manifest(dplyr = "1.1.4", ggplot2 = "3.5.0", path = tmp)
+#' unlink(tmp)
 dep_manifest <- function(..., path = default_manifest_path()) {
   reqs <- c(...)
 

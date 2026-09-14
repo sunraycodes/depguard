@@ -26,7 +26,5 @@ back to reporting a plain snapshot of currently loaded package versions
 so you have a baseline to diff against later with \code{\link[=dep_diff]{dep_diff()}}.
 }
 \examples{
-\dontrun{
 dep_healthcheck()
-}
 }

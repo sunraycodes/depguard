@@ -24,6 +24,8 @@
 #'
 #' @param x A `depguard_snapshot` object.
 #' @param ... Ignored.
+#'
+#' @return The `x` object, returned invisibly.
 #' @export
 print.depguard_snapshot <- function(x, ...) {
   cli::cli_h3("depguard snapshot")

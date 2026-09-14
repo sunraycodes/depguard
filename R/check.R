@@ -33,12 +33,10 @@ dep_check <- function(manifest = NULL,
   }
 
   direct_pkgs <- names(manifest)
-  installed_db <- utils::installed.packages()
 
   if (recursive) {
     dep_tree <- tools::package_dependencies(
       direct_pkgs,
-      db = installed_db,
       recursive = TRUE,
       which = c("Depends", "Imports", "LinkingTo")
     )
@@ -53,8 +51,7 @@ dep_check <- function(manifest = NULL,
       pkg = pkg,
       required = manifest[[pkg]],
       depth = "direct",
-      required_by = NA_character_,
-      installed_db = installed_db
+      required_by = NA_character_
     )
 
     transitive_pkgs <- dep_tree[[pkg]]
@@ -64,8 +61,7 @@ dep_check <- function(manifest = NULL,
         pkg = tpkg,
         required = NA_character_,
         depth = "transitive",
-        required_by = pkg,
-        installed_db = installed_db
+        required_by = pkg
       )
     }
   }
@@ -82,12 +78,11 @@ dep_check <- function(manifest = NULL,
   invisible(result)
 }
 
-check_one_package <- function(pkg, required, depth, required_by, installed_db) {
-  installed_version <- if (pkg %in% rownames(installed_db)) {
-    installed_db[pkg, "Version"]
-  } else {
-    NA_character_
-  }
+check_one_package <- function(pkg, required, depth, required_by) {
+  installed_version <- tryCatch(
+    as.character(utils::packageVersion(pkg)),
+    error = function(e) NA_character_
+  )
 
   status <- if (is.na(installed_version)) {
     "missing"
