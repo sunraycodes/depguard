@@ -1,8 +1,13 @@
 # depguard
+
 <!-- badges: start -->
-  [![R-CMD-check](https://github.com/sunraycodes/depguard/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sunraycodes/depguard/actions/workflows/R-CMD-check.yaml)
-  <!-- badges: end -->
-  
+[![R-CMD-check](https://github.com/sunraycodes/depguard/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/sunraycodes/depguard/actions/workflows/R-CMD-check.yaml)
+[![CRAN status](https://www.r-pkg.org/badges/version/depguard)](https://CRAN.R-project.org/package=depguard)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/depguard)](https://cran.r-project.org/package=depguard)
+[![DOI](https://img.shields.io/badge/doi-10.32614/CRAN.package.depguard-blue.svg)](https://doi.org/10.32614/CRAN.package.depguard)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+<!-- badges: end -->
+
 Manifest-based, transitive-aware dependency conflict detection for R, built
 for sandboxed and ephemeral notebook environments (Kaggle, Colab, Binder)
 where a full `renv` lockfile workflow doesn't fit.
@@ -17,6 +22,12 @@ persist the environment. `depguard` fills the narrower gap: lightweight,
 local-first checks that work without lockfile ownership.
 
 ## Install
+
+```r
+install.packages("depguard")
+```
+
+Development version:
 
 ```r
 # install.packages("remotes")
@@ -54,7 +65,7 @@ dep_healthcheck()
 dep_fix("stringr", "1.5.0")
 ```
 
-See `vignette("kaggle-colab-workflow")` for the full walkthrough.
+See the [vignette](https://cran.r-project.org/web/packages/depguard/vignettes/kaggle-colab-workflow.html) for the full walkthrough, or run `vignette("kaggle-colab-workflow")` locally.
 
 ## Scope
 
@@ -64,6 +75,32 @@ CRAN's live metadata. `dep_fix()` performs a single-package rollback only;
 it does not resolve cascading conflicts -- use `renv::restore()` or `pak`'s
 solver for that.
 
+## Citation
+
+If you use depguard in your work, please cite:
+
+> Shah S, Patel K (2026). _depguard: Manifest-Based Dependency Conflict
+> Detection for Sandboxed R Sessions_. R package version 0.1.0,
+> <https://CRAN.R-project.org/package=depguard>.
+> doi:10.32614/CRAN.package.depguard
+
+Or in R:
+
+```r
+citation("depguard")
+```
+
+## Contributing
+
+Bug reports and pull requests are welcome at
+[github.com/sunraycodes/depguard/issues](https://github.com/sunraycodes/depguard/issues).
+
+## Authors
+
+- **Samruddhi Amol Shah** — author, maintainer
+- **Kartik Patel** — author
+- **Amrit Pal** — contributor
+
 ## License
 
-MIT
+MIT + file [LICENSE](LICENSE)
