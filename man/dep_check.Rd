@@ -2,14 +2,18 @@
 % Please edit documentation in R/check.R
 \name{dep_check}
 \alias{dep_check}
+\alias{print.depguard_check}
 \title{Check the live environment against a dependency manifest}
 \usage{
 dep_check(
   manifest = NULL,
   path = default_manifest_path(),
   recursive = TRUE,
-  check_cran = FALSE
+  check_cran = FALSE,
+  stop_on_problem = FALSE
 )
+
+\method{print}{depguard_check}(x, all = FALSE, ...)
 }
 \arguments{
 \item{manifest}{A named character vector as returned by \code{\link[=dep_manifest]{dep_manifest()}}
@@ -21,20 +25,50 @@ dep_check(
 dependencies of each manifest package, not just the packages listed
 directly.}
 
-\item{check_cran}{Logical; if \code{TRUE}, additionally query CRAN's live
-metadata for newer available versions. Requires network access and is
-\code{FALSE} by default since sandboxed notebooks may have flaky or no
-internet.}
+\item{check_cran}{Logical; if \code{TRUE}, additionally query CRAN for the
+latest available version of each package (adds \code{cran_latest} and
+\code{outdated} columns). Requires network access; if CRAN cannot be reached
+a warning is shown and the rest of the result is returned unchanged.}
+
+\item{stop_on_problem}{Logical; if \code{TRUE}, raise an error when any
+requirement is not \code{"ok"}. Useful in scripts and CI.}
+
+\item{x}{A \code{depguard_check} object.}
+
+\item{all}{Logical; show every row rather than only problem rows.}
+
+\item{...}{Passed on to the data frame print method.}
 }
 \value{
-A data frame with columns \code{package}, \code{required}, \code{installed},
-\code{status} (\code{"ok"}, \code{"mismatch"}, \code{"missing"}), \code{depth}
-(\code{"direct"}/\code{"transitive"}), and \code{required_by}.
+Invisibly, a data frame (class \code{depguard_check}) with columns
+\code{package}, \code{required}, \code{installed}, \code{status}, \code{depth}
+(\code{"direct"}/\code{"transitive"}), \code{required_by}, \code{loaded} (version loaded in
+this session, or \code{"-"}) and \code{reason}. Printing it shows only the
+problem rows; use \code{print(x, all = TRUE)} to see everything.
 }
 \description{
-Walks the transitive dependency tree of each package declared in the
-manifest and compares installed versions against requirements. By
-default this is entirely local (reads installed package \code{DESCRIPTION}
-metadata) and makes no network calls, which matters in sandboxed
-notebooks with limited or no internet access.
+Verifies that the packages declared in a manifest are installed at the
+required versions, and (by default) walks their transitive dependency
+tree to catch \emph{real} conflicts: for every package in the tree, each
+\code{Imports}/\code{Depends}/\code{LinkingTo} constraint such as \verb{cli (>= 3.4.0)} is
+compared against the version actually installed. This is the situation
+that bites in practice, e.g. a newer package was installed but a
+dependency was left at an older version.
+}
+\details{
+Everything is computed from locally installed package metadata, so it
+works with no internet connection. The network is only used if
+\code{check_cran = TRUE}.
+
+The \code{status} column is one of:
+\itemize{
+\item \code{"ok"}: requirement satisfied;
+\item \code{"mismatch"}: installed, but the version does not satisfy the requirement;
+\item \code{"missing"}: not installed;
+\item \code{"restart"}: the version on disk is fine, but the older version still
+loaded in this R session is not. Restart R to pick up the new one.
+}
+}
+\examples{
+dep_check(manifest = c(cli = "1.0.0", utils = ""), recursive = FALSE)
 }

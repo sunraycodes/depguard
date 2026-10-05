@@ -4,18 +4,32 @@
 \alias{dep_diff}
 \title{Diff the current environment against a prior snapshot}
 \usage{
-dep_diff(snapshot)
+dep_diff(snapshot = NULL)
 }
 \arguments{
-\item{snapshot}{A \code{depguard_snapshot} object from \code{\link[=dep_snapshot]{dep_snapshot()}}.}
+\item{snapshot}{A \code{depguard_snapshot} from \code{\link[=dep_snapshot]{dep_snapshot()}}, a path to a
+snapshot saved with \code{dep_snapshot(path = )}, or \code{NULL} (default) to use
+the most recent snapshot taken in this session.}
 }
 \value{
-A data frame with columns \code{package}, \code{before}, \code{after},
-\code{changed}, \code{currently_loaded}, \code{risk}.
+Invisibly, a data frame with one row per package and columns
+\code{package}, \code{before}, \code{after}, \code{change} (\code{"upgraded"}, \code{"downgraded"},
+\code{"added"}, \code{"removed"}, \code{"none"}), \code{changed}, \code{currently_loaded},
+\code{loaded_version}, \code{session_stale} (loaded version differs from disk) and
+\code{risk}.
 }
 \description{
 Compares package versions now against a snapshot taken earlier with
-\code{\link[=dep_snapshot]{dep_snapshot()}}, flagging anything that changed. Packages that changed
-\emph{and} are still loaded in the current session are flagged as higher risk,
-since those are the ones most likely to cause silent downstream breakage.
+\code{\link[=dep_snapshot]{dep_snapshot()}}. Changes are detected on disk, so an upgrade is caught
+even though R keeps running the old version in memory until restart.
+}
+\details{
+Risk levels:
+\itemize{
+\item \code{"high"}: the package is loaded in this session \emph{and} it changed on disk
+(or the loaded version no longer matches disk). Code already run used
+one version; code run after a restart will use another.
+\item \code{"low"}: the package changed but is not loaded.
+\item \code{"none"}: nothing changed.
+}
 }

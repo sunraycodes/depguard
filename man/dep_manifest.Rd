@@ -7,25 +7,48 @@
 dep_manifest(..., path = default_manifest_path())
 }
 \arguments{
-\item{...}{Named arguments of the form \code{package = "version"}, e.g.
-\code{dplyr = "1.1.4"}. A version of \code{NA} or \code{""} means "any version is
-acceptable, just check it's installed".}
+\item{...}{Named arguments of the form \code{package = "requirement"}, e.g.
+\code{dplyr = "1.1.4"} or \code{ggplot2 = ">= 3.5.0"}.}
 
 \item{path}{File path to store the manifest. Defaults to
-\code{.depguard_manifest.rds} in the current working directory.}
+\code{.depguard_manifest.rds} in the current working directory (or
+\code{getOption("depguard.manifest_path")} if set).}
 }
 \value{
 Invisibly, the manifest as a named character vector.
 }
 \description{
-Records the packages (and minimum versions) your project needs, so that
+Records the packages and versions your project needs, so that
 \code{\link[=dep_check]{dep_check()}} can later verify the live environment satisfies them. This
 is a lightweight alternative to a full \code{renv} lockfile, intended for
-sandboxed or ephemeral notebook sessions where you don't own or persist
-the environment.
+sandboxed or ephemeral notebook sessions and for quick desktop projects
+where you don't want to manage a lockfile.
+}
+\details{
+Each requirement can be:
+\itemize{
+\item a bare version such as \code{"1.1.4"}: \strong{at least} that version;
+\item a version with an operator: \code{">= 1.1.4"}, \code{"> 1.1"}, \code{"== 1.1.4"}
+(exactly), \code{"< 2.0"}, \code{"<= 2.0"} or \code{"!= 1.2"};
+\item \code{NA} or \code{""}: any version, as long as it is installed.
+}
+
+Use \code{"=="} when an \emph{upgrade} would also be a conflict (see
+\code{\link[=dep_manifest_freeze]{dep_manifest_freeze()}} to pin whatever you have now).
+
+The file format follows the extension of \code{path}. \code{.rds} (the default)
+stores an R object. Any other extension (for example \code{depguard.txt})
+writes a human-readable text file, one \verb{package (op version)} per line,
+which is convenient to edit and to commit to version control.
 }
 \examples{
 tmp <- tempfile(fileext = ".rds")
-dep_manifest(dplyr = "1.1.4", ggplot2 = "3.5.0", path = tmp)
+dep_manifest(dplyr = "1.1.4", ggplot2 = ">= 3.5.0", path = tmp)
 unlink(tmp)
+
+# Human-readable text format
+txt <- tempfile(fileext = ".txt")
+dep_manifest(cli = "== 3.6.2", path = txt)
+readLines(txt)
+unlink(txt)
 }

@@ -4,32 +4,61 @@
 \alias{dep_fix}
 \title{Roll back a single package to a specific version}
 \usage{
-dep_fix(package, version, method = c("pak", "remotes"))
+dep_fix(
+  package,
+  version,
+  method = c("auto", "pak", "remotes", "archive"),
+  lib = NULL,
+  dry_run = FALSE
+)
 }
 \arguments{
 \item{package}{Name of the package to roll back.}
 
 \item{version}{Target version string, e.g. \code{"1.5.0"}.}
 
-\item{method}{Which backend to use: \code{"pak"} (default, if available) or
-\code{"remotes"}.}
+\item{method}{Which backend to use: \code{"auto"} (default), \code{"pak"},
+\code{"remotes"} or \code{"archive"}. If the requested backend is not available,
+the next one in that order is used.}
+
+\item{lib}{Library to install into. Defaults to the first writable
+library on \code{\link[=.libPaths]{.libPaths()}}.}
+
+\item{dry_run}{Logical; if \code{TRUE}, show what would be done without
+installing anything.}
 }
 \value{
-Invisibly, \code{TRUE} on success.
+Invisibly, \code{TRUE} on success; with \code{dry_run = TRUE}, a list
+describing the plan.
 }
 \description{
 Reinstalls one package at a specific version, e.g. to undo a version that
 was silently pulled in as a side effect of another install. This performs
-a \strong{single-package rollback only} — it does not resolve cascading
+a \strong{single-package rollback only}: it does not resolve cascading
 conflicts that the rollback might introduce with other packages. For full
 dependency resolution, use \code{renv::restore()} or \code{pak}'s solver instead.
 }
 \details{
-Requires the \code{remotes} or \code{pak} package (listed in Suggests, not
-Imports, so \code{depguard}'s core checking functions stay dependency-light).
+Three backends are supported. With \code{method = "auto"} the first one
+available is used: \code{pak}, then \code{remotes} (both in Suggests), then
+\code{"archive"}, which needs nothing beyond base R: it downloads the source
+tarball from the CRAN archive and installs it. (Source installs of
+packages with compiled code need a compiler toolchain on Windows and
+macOS; on Kaggle/Colab-style Linux images this is normally present.)
+
+With \code{method = "auto"}, if the chosen backend fails (for example because
+the internet is flaky), \code{dep_fix()} falls back to the archive backend
+before giving up. Set \code{options(depguard.cran_mirror = "<url>")} to use a
+different CRAN mirror for the \code{remotes} and \code{archive} backends (\code{pak}
+uses its own repository settings).
+
+After installing, the version on disk is verified. If the package is
+loaded in the current session, R keeps running the old version until it
+is restarted, and you are told so.
 }
 \examples{
 \dontrun{
 dep_fix("stringr", "1.5.0")
+dep_fix("stringr", "1.5.0", dry_run = TRUE)
 }
 }

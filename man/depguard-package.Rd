@@ -4,26 +4,30 @@
 \name{depguard-package}
 \alias{depguard}
 \alias{depguard-package}
-\title{depguard: Manifest-Based Dependency Conflict Detection for Sandboxed R Sessions}
+\title{depguard: Manifest-Based Dependency Conflict Detection for R}
 \description{
-\code{depguard} helps you catch R package version conflicts in sandboxed or
-ephemeral notebook environments (Kaggle, Colab, Binder) where a full
-\code{renv} lockfile workflow is impractical because you don't own or persist
-the environment.
+\code{depguard} helps you catch R package version conflicts in hosted notebooks
+(Kaggle, Colab, Binder) and on ordinary desktops, where a full \code{renv}
+lockfile workflow is impractical or overkill.
 }
 \details{
-Two complementary modes:
+Three complementary tools:
 \itemize{
 \item \strong{Manifest mode}: declare the packages/versions you need with
-\code{\link[=dep_manifest]{dep_manifest()}}, then verify the live environment (including
-transitive dependencies) with \code{\link[=dep_check]{dep_check()}}.
+\code{\link[=dep_manifest]{dep_manifest()}} (or pin the current ones with \code{\link[=dep_manifest_freeze]{dep_manifest_freeze()}}),
+then verify the live environment, including every transitive
+\code{Imports}/\code{Depends} constraint, with \code{\link[=dep_check]{dep_check()}}.
 \item \strong{Snapshot mode}: capture a baseline with \code{\link[=dep_snapshot]{dep_snapshot()}} before an
-install, then use \code{\link[=dep_diff]{dep_diff()}} afterward to see what changed and
-whether it affects packages already loaded in your session.
+install, then use \code{\link[=dep_diff]{dep_diff()}} afterwards to see what changed on disk
+and whether it affects packages already loaded in your session.
+\item \strong{Diagnostics}: \code{\link[=dep_env]{dep_env()}} describes the environment, and
+\code{\link[=dep_libraries]{dep_libraries()}} finds packages shadowed by another library.
 }
 
-\code{\link[=dep_healthcheck]{dep_healthcheck()}} is a convenience entry point that picks the
-appropriate mode automatically.
+\code{\link[=dep_healthcheck]{dep_healthcheck()}} runs the right combination automatically, and
+\code{\link[=dep_fix]{dep_fix()}} rolls a single package back to a specific version.
+
+All checks run from locally installed metadata and work offline.
 }
 \seealso{
 Useful links:
@@ -38,7 +42,6 @@ Useful links:
 
 Authors:
 \itemize{
-  \item Samruddhi Amol Shah \email{samruddhi.bitnbyte@gmail.com}
   \item Kartik Patel \email{kartikpatel.id@gmail.com}
 }
 

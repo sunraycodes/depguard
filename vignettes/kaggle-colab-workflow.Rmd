@@ -1,8 +1,8 @@
 ---
-title: "Using depguard in Kaggle, Colab, and other sandboxed notebooks"
+title: "Using depguard in Kaggle, Colab, and on your desktop"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Using depguard in Kaggle, Colab, and other sandboxed notebooks}
+  %\VignetteIndexEntry{Using depguard in Kaggle, Colab, and on your desktop}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -20,23 +20,34 @@ knitr::opts_chunk$set(
 Hosted, ephemeral R notebooks (Kaggle, Colab, Binder, and similar) ship with
 a large pre-installed set of packages at fixed versions. When you install an
 additional package, its dependencies can silently upgrade or downgrade a
-package that is already loaded elsewhere in your session -- breaking code
-further down the notebook with no install-time error.
+package that is already loaded elsewhere in your session, breaking code
+further down the notebook with no install-time error. The same thing happens
+on a normal desktop whenever you install into a library you share between
+projects.
 
 Tools like `renv` solve this well for projects you fully own and can persist,
-but assume you can write lockfiles and restore a private library. That
-often doesn't fit a throwaway, read-mostly notebook session. `depguard`
-fills the narrower gap: lightweight, local-first checks that work without
-lockfile ownership.
+but assume you can write lockfiles and restore a private library. That often
+doesn't fit a throwaway notebook, or a quick script. `depguard` fills the
+narrower gap: lightweight checks that run entirely from locally installed
+metadata, so they work offline.
+
+## What is the environment?
+
+```{r}
+library(depguard)
+dep_env()
+```
+
+`dep_env()` detects Kaggle, Colab, Binder, RStudio and plain desktop
+sessions, and reports which libraries are writable. `depguard` uses it to
+word its advice (for example, how to restart the session).
 
 ## Workflow 1: snapshot before, diff after
 
 Run this before installing anything new:
 
 ```{r}
-library(depguard)
-
-snap <- dep_snapshot()
+snap <- dep_snapshot(path = "depguard_snapshot.rds")
 ```
 
 Install what you need as usual:
@@ -51,9 +62,18 @@ Then check what changed:
 dep_diff(snap)
 ```
 
-Packages that changed *and* are still loaded in your session are flagged
-`risk = "high"` -- these are the ones most likely to break code you've
-already run.
+The comparison is made on the versions *on disk*. R keeps running the old
+version of an already-loaded package until you restart, so a package that
+changed and is still loaded is flagged `risk = "high"` and `session_stale`:
+code you already ran used one version, and code run after a restart will use
+another.
+
+In hosted notebooks you normally have to restart the session after installing.
+Saving the snapshot with `path` lets you compare *after* the restart:
+
+```{r}
+dep_diff("depguard_snapshot.rds")
+```
 
 ## Workflow 2: declare a manifest
 
@@ -61,44 +81,77 @@ If you know what your notebook needs up front, declare it once:
 
 ```{r}
 dep_manifest(
-  dplyr = "1.1.4",
-  ggplot2 = "3.5.0",
-  quantmod = "0.4.26"
+  dplyr = ">= 1.1.4",   # at least this version
+  ggplot2 = "3.5.0",    # a bare version also means "at least"
+  quantmod = "== 0.4.26" # exactly this version
 )
 ```
 
-Then, any time later in the session (or at the top of a rerun):
+Or pin whatever you are using right now:
 
 ```{r}
-dep_check()
+library(dplyr)
+dep_manifest_freeze(path = "depguard.txt")
 ```
 
-This walks the transitive dependency tree of each declared package using
-only locally installed metadata (no network calls by default) and reports
-missing packages, version mismatches, and which top-level package pulled
-in each transitive dependency.
+Any file extension other than `.rds` produces a plain-text manifest that is
+easy to read, edit and commit:
+
+```
+# depguard manifest: package (operator version)
+dplyr (== 1.1.4)
+```
+
+Then, any time later:
+
+```{r}
+dep_check(path = "depguard.txt")
+```
+
+This walks the dependency tree of each declared package using only locally
+installed metadata and compares the version constraints that the packages
+declare on one another (for example, `cli (>= 3.4.0)`) with what is actually
+installed. It reports `missing`, `mismatch`, and `restart` (the version on disk
+is right but the session is still running an older one), along with which
+package required each dependency. In scripts and CI, use
+`dep_check(stop_on_problem = TRUE)` to fail on any problem.
 
 ## Workflow 3: one-shot health check
 
-If you just want a sensible default at the top of a notebook:
+At the top of a notebook:
 
 ```{r}
 dep_healthcheck()
 ```
 
-This checks against a manifest if one exists, or falls back to capturing a
-baseline snapshot you can diff against later.
+This describes the environment, warns about packages hidden by another
+library, and then checks a manifest if one exists, or captures a baseline
+snapshot otherwise.
+
+## "I upgraded it but nothing changed"
+
+R loads the first copy of a package it finds on the library path. A stale copy
+in a library earlier on the path hides the one you just installed.
+
+```{r}
+dep_libraries()
+```
 
 ## Fixing a conflict
 
 If a specific package got silently bumped and broke something, you can roll
-just that package back to a specific version:
-```{r , eval = FALSE} # nolint
-=======
-```{r, eval = FALSE}
+just that package back to a specific version, and preview it first:
+
+```{r}
+dep_fix("stringr", "1.5.0", dry_run = TRUE)
 dep_fix("stringr", "1.5.0")
 ```
 
-This performs a single-package rollback only -- it does not resolve
-cascading conflicts the rollback might introduce elsewhere. For full
-dependency resolution, use `renv::restore()` or `pak`'s solver.
+`dep_fix()` uses `pak` or `remotes` when installed and otherwise downloads the
+source from the CRAN archive using only base R. It checks the result and tells
+you if you need to restart, or if another library is still hiding the rolled-back
+copy.
+
+This performs a single-package rollback only; it does not resolve cascading
+conflicts the rollback might introduce elsewhere. For full dependency
+resolution, use `renv::restore()` or `pak`'s solver.

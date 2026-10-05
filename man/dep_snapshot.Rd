@@ -2,18 +2,41 @@
 % Please edit documentation in R/snapshot.R
 \name{dep_snapshot}
 \alias{dep_snapshot}
-\title{Snapshot currently loaded package versions}
+\alias{print.depguard_snapshot}
+\title{Snapshot package versions}
 \usage{
-dep_snapshot()
+dep_snapshot(scope = c("all", "loaded"), path = NULL)
+
+\method{print}{depguard_snapshot}(x, ...)
+}
+\arguments{
+\item{scope}{\code{"all"} (default) records every installed package, so silent
+changes to packages you have not loaded yet are caught too. \code{"loaded"}
+records only packages loaded in this session.}
+
+\item{path}{Optional file path (\code{.rds}) to save the snapshot to.}
+
+\item{x}{A \code{depguard_snapshot} object.}
+
+\item{...}{Ignored.}
 }
 \value{
-An object of class \code{depguard_snapshot} (invisibly printable),
-suitable for passing to \code{\link[=dep_diff]{dep_diff()}}.
+An object of class \code{depguard_snapshot}, suitable for passing to
+\code{\link[=dep_diff]{dep_diff()}}. Its \code{packages} element is a data frame with columns
+\code{package}, \code{disk_version}, \code{library} and \code{loaded_version}.
 }
 \description{
-Captures the versions of all currently loaded/attached packages, so a
-later call to \code{\link[=dep_diff]{dep_diff()}} can detect what an install silently changed.
-This is a thin wrapper around \code{\link[sessioninfo:session_info]{sessioninfo::session_info()}}.
+Records, for every installed package, the version on disk (what a fresh R
+session would load) and the version currently loaded in this session. A
+later call to \code{\link[=dep_diff]{dep_diff()}} compares against the snapshot to reveal what an
+install silently changed.
+}
+\details{
+The most recent snapshot is remembered for the rest of the session, so
+\code{dep_diff()} can be called without arguments. In hosted notebooks the
+session usually has to be restarted after an install; pass \code{path} to save
+the snapshot to disk so it survives the restart, then call
+\code{dep_diff("path/to/snapshot.rds")}.
 }
 \examples{
 snap <- dep_snapshot()

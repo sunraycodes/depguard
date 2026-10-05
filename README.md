@@ -8,18 +8,20 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 <!-- badges: end -->
 
-Manifest-based, transitive-aware dependency conflict detection for R, built
-for sandboxed and ephemeral notebook environments (Kaggle, Colab, Binder)
-where a full `renv` lockfile workflow doesn't fit.
+Manifest-based, transitive-aware dependency conflict detection for R. Built
+for hosted notebooks (Kaggle, Colab, Binder) where a full `renv` lockfile
+workflow doesn't fit, and just as useful on a normal desktop.
 
 ## Why
 
 Hosted notebooks ship a pre-installed package set at fixed versions.
-Installing a new package can silently upgrade a dependency that's already
-loaded elsewhere in your session, breaking code downstream with no
-install-time error. `renv` and `pak` are great but assume you own and can
-persist the environment. `depguard` fills the narrower gap: lightweight,
-local-first checks that work without lockfile ownership.
+Installing a new package can silently upgrade or downgrade a dependency that's
+already loaded elsewhere in your session, breaking code downstream with no
+install-time error. The same happens on a desktop when libraries are shared
+between projects. `renv` and `pak` are great but assume you own and can
+persist the environment. `depguard` fills the narrower gap: lightweight checks
+that work from locally installed metadata, **offline**, without lockfile
+ownership.
 
 ## Install
 
@@ -36,22 +38,31 @@ remotes::install_github("sunraycodes/depguard")
 
 ## Usage
 
-**Snapshot / diff**, around an install:
+**Snapshot / diff**, around an install. Changes are detected on disk, so an
+upgrade of an already-loaded package is caught even though R keeps running the
+old version until restart. Save the snapshot to survive the restart hosted
+notebooks require:
 
 ```r
 library(depguard)
 
-snap <- dep_snapshot()
+snap <- dep_snapshot(path = "snapshot.rds")
 install.packages("someNewPackage")
-dep_diff(snap)
+dep_diff(snap)              # or, after a restart: dep_diff("snapshot.rds")
 ```
 
-**Manifest**, declared once per project:
+**Manifest**, declared once per project. Bare versions mean "at least";
+operators give you control; text manifests are readable and diff-friendly:
 
 ```r
-dep_manifest(dplyr = "1.1.4", ggplot2 = "3.5.0")
-dep_check()
+dep_manifest(dplyr = ">= 1.1.4", ggplot2 = "3.5.0", cli = "== 3.6.2")
+dep_manifest_freeze(path = "depguard.txt")   # pin what you use right now
+dep_check()                                  # or dep_check(path = "depguard.txt")
 ```
+
+`dep_check()` also verifies the constraints your packages declare on each
+other (`Imports: cli (>= 3.4.0)`), which is where real conflicts hide.
+Use `dep_check(stop_on_problem = TRUE)` in scripts and CI.
 
 **One-shot health check**, at the top of a notebook:
 
@@ -59,21 +70,31 @@ dep_check()
 dep_healthcheck()
 ```
 
-**Single-package rollback**:
+**Diagnostics**:
 
 ```r
+dep_env()        # Kaggle / Colab / Binder / RStudio / desktop; writable libraries
+dep_libraries()  # packages hidden by a different copy in another library
+```
+
+**Single-package rollback** (uses `pak` or `remotes` if installed, otherwise
+base R and the CRAN archive):
+
+```r
+dep_fix("stringr", "1.5.0", dry_run = TRUE)
 dep_fix("stringr", "1.5.0")
 ```
 
-See the [vignette](https://cran.r-project.org/web/packages/depguard/vignettes/kaggle-colab-workflow.html) for the full walkthrough, or run `vignette("kaggle-colab-workflow")` locally.
+See the [vignette](https://cran.r-project.org/web/packages/depguard/vignettes/kaggle-colab-workflow.html)
+for the full walkthrough, or run `vignette("kaggle-colab-workflow")` locally.
 
 ## Scope
 
-`dep_check()` is local-only by default (no network calls) and covers
-transitive dependencies. Pass `check_cran = TRUE` to additionally query
-CRAN's live metadata. `dep_fix()` performs a single-package rollback only;
-it does not resolve cascading conflicts -- use `renv::restore()` or `pak`'s
-solver for that.
+All checks are local-only by default (no network calls) and cover transitive
+dependencies. Pass `check_cran = TRUE` to additionally query CRAN for the
+latest versions. `dep_fix()` performs a single-package rollback only; it does
+not resolve cascading conflicts. Use `renv::restore()` or `pak`'s solver for
+that.
 
 ## Citation
 

@@ -1,35 +1,28 @@
-#' depguard: Manifest-Based Dependency Conflict Detection for Sandboxed R Sessions
+#' depguard: Manifest-Based Dependency Conflict Detection for R
 #'
-#' `depguard` helps you catch R package version conflicts in sandboxed or
-#' ephemeral notebook environments (Kaggle, Colab, Binder) where a full
-#' `renv` lockfile workflow is impractical because you don't own or persist
-#' the environment.
+#' `depguard` helps you catch R package version conflicts in hosted notebooks
+#' (Kaggle, Colab, Binder) and on ordinary desktops, where a full `renv`
+#' lockfile workflow is impractical or overkill.
 #'
-#' Two complementary modes:
+#' Three complementary tools:
 #'
 #' - **Manifest mode**: declare the packages/versions you need with
-#'   [dep_manifest()], then verify the live environment (including
-#'   transitive dependencies) with [dep_check()].
+#'   [dep_manifest()] (or pin the current ones with [dep_manifest_freeze()]),
+#'   then verify the live environment, including every transitive
+#'   `Imports`/`Depends` constraint, with [dep_check()].
 #' - **Snapshot mode**: capture a baseline with [dep_snapshot()] before an
-#'   install, then use [dep_diff()] afterward to see what changed and
-#'   whether it affects packages already loaded in your session.
+#'   install, then use [dep_diff()] afterwards to see what changed on disk
+#'   and whether it affects packages already loaded in your session.
+#' - **Diagnostics**: [dep_env()] describes the environment, and
+#'   [dep_libraries()] finds packages shadowed by another library.
 #'
-#' [dep_healthcheck()] is a convenience entry point that picks the
-#' appropriate mode automatically.
+#' [dep_healthcheck()] runs the right combination automatically, and
+#' [dep_fix()] rolls a single package back to a specific version.
+#'
+#' All checks run from locally installed metadata and work offline.
 #'
 #' @keywords internal
 "_PACKAGE"
 
-#' Print a depguard snapshot
-#'
-#' @param x A `depguard_snapshot` object.
-#' @param ... Ignored.
-#'
-#' @return The `x` object, returned invisibly.
-#' @export
-print.depguard_snapshot <- function(x, ...) {
-  cli::cli_h3("depguard snapshot")
-  cli::cli_text("Captured: {x$time}")
-  cli::cli_text("Packages recorded: {nrow(x$packages)}")
-  invisible(x)
-}
+#' @importFrom stats setNames
+NULL

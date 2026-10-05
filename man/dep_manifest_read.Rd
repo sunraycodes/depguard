@@ -7,8 +7,9 @@
 dep_manifest_read(path = default_manifest_path())
 }
 \arguments{
-\item{path}{File path to the manifest. Defaults to
-\code{.depguard_manifest.rds} in the current working directory.}
+\item{path}{File path to the manifest (\code{.rds}, or a text file written by
+\code{\link[=dep_manifest]{dep_manifest()}}). Defaults to \code{.depguard_manifest.rds} in the current
+working directory.}
 }
 \value{
 A named character vector of package requirements, or \code{NULL}

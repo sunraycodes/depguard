@@ -4,26 +4,34 @@
 \alias{dep_healthcheck}
 \title{Run a one-shot dependency health check}
 \usage{
-dep_healthcheck(path = default_manifest_path(), check_cran = FALSE)
+dep_healthcheck(
+  path = default_manifest_path(),
+  check_cran = FALSE,
+  libraries = TRUE
+)
 }
 \arguments{
 \item{path}{File path to the manifest, used only if \code{manifest} is \code{NULL}.}
 
-\item{check_cran}{Logical; if \code{TRUE}, additionally query CRAN's live
-metadata for newer available versions. Requires network access and is
-\code{FALSE} by default since sandboxed notebooks may have flaky or no
-internet.}
+\item{check_cran}{Logical; if \code{TRUE}, additionally query CRAN for the
+latest available version of each package (adds \code{cran_latest} and
+\code{outdated} columns). Requires network access; if CRAN cannot be reached
+a warning is shown and the rest of the result is returned unchanged.}
+
+\item{libraries}{Logical; also run \code{\link[=dep_libraries]{dep_libraries()}} to look for shadowed
+packages (default \code{TRUE}).}
 }
 \value{
 Invisibly, either the result of \code{\link[=dep_check]{dep_check()}} (if a manifest
 exists) or a \code{depguard_snapshot} object (if not).
 }
 \description{
-Convenience entry point intended to be run at the top of a notebook
-session (e.g. on Kaggle or Colab). If a manifest exists (see
-\code{\link[=dep_manifest]{dep_manifest()}}), checks the environment against it. Otherwise, falls
-back to reporting a plain snapshot of currently loaded package versions
-so you have a baseline to diff against later with \code{\link[=dep_diff]{dep_diff()}}.
+Convenience entry point intended to be run at the top of a notebook or
+script. It reports the environment (hosted notebook or desktop, writable
+libraries), warns about packages shadowed by another library, and then
+either checks the environment against your manifest (see
+\code{\link[=dep_manifest]{dep_manifest()}}) or, if there is none, captures a baseline snapshot you
+can compare against later with \code{\link[=dep_diff]{dep_diff()}}.
 }
 \examples{
 dep_healthcheck()
