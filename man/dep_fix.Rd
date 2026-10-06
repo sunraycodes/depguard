@@ -42,9 +42,10 @@ dependency resolution, use \code{renv::restore()} or \code{pak}'s solver instead
 Three backends are supported. With \code{method = "auto"} the first one
 available is used: \code{pak}, then \code{remotes} (both in Suggests), then
 \code{"archive"}, which needs nothing beyond base R: it downloads the source
-tarball from the CRAN archive and installs it. (Source installs of
-packages with compiled code need a compiler toolchain on Windows and
-macOS; on Kaggle/Colab-style Linux images this is normally present.)
+tarball from the CRAN archive and installs it. (Installing from source
+needs Rtools on Windows, and the Xcode command line tools on macOS if the
+package contains compiled code; Kaggle/Colab-style Linux images normally
+have what is needed.)
 
 With \code{method = "auto"}, if the chosen backend fails (for example because
 the internet is flaky), \code{dep_fix()} falls back to the archive backend

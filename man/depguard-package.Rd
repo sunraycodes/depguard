@@ -42,6 +42,7 @@ Useful links:
 
 Authors:
 \itemize{
+  \item Samruddhi Amol Shah \email{samruddhi.bitnbyte@gmail.com}
   \item Kartik Patel \email{kartikpatel.id@gmail.com}
 }
 

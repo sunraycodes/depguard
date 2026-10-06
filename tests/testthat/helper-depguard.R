@@ -13,7 +13,7 @@ local_clean_platform <- function(.env = parent.frame()) {
 local_test_lib <- function(.env = parent.frame()) {
   lib <- withr::local_tempdir(.local_envir = .env)
   withr::local_libpaths(lib, action = "prefix", .local_envir = .env)
-  normalizePath(lib)
+  normalizePath(lib, winslash = "/")
 }
 
 # Write the source tree of a tiny package; returns its directory.

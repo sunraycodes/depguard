@@ -153,3 +153,24 @@ test_that("an explicitly chosen backend does not silently fall back", {
   )
   expect_error(suppressMessages(dep_fix("dgfallback", "1.0", method = "remotes", lib = lib)), "boom")
 })
+
+test_that("same_path ignores spelling differences (slashes, '..', trailing /)", {
+  d <- withr::local_tempdir()
+  dir.create(file.path(d, "a"))
+  expect_true(same_path(file.path(d, "a"), file.path(d, "a", "..", "a")))
+  expect_true(same_path(file.path(d, "a"), paste0(file.path(d, "a"), "/")))
+  if (.Platform$OS.type == "windows") expect_true(same_path(d, chartr("/", "\\", d)))
+  expect_false(same_path(file.path(d, "a"), d))
+  expect_false(same_path(NA_character_, d))
+})
+
+test_that("already-at-version still short-circuits when the library is spelled differently", {
+  lib <- local_test_lib()
+  install_test_pkg(lib, "dgfix", "1.0")
+  odd <- file.path(lib, "..", basename(lib))      # same directory, different spelling
+  expect_message(
+    res <- dep_fix("dgfix", "1.0", method = "archive", lib = odd),
+    "already at 1.0"
+  )
+  expect_true(res)
+})

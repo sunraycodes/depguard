@@ -18,6 +18,7 @@ Description: Lightweight, offline-first checking of R package dependencies
     ownership is impractical, and equally usable on a normal desktop.
 License: MIT + file LICENSE
 Encoding: UTF-8
+Language: en-US
 Roxygen: list(markdown = TRUE)
 Depends: R (>= 3.5)
 Imports: cli, stats, tools, utils
@@ -27,4 +28,4 @@ VignetteBuilder: knitr
 URL: https://github.com/sunraycodes/depguard
 BugReports: https://github.com/sunraycodes/depguard/issues
 NeedsCompilation: no
-RoxygenNote: 7.3.1
+Config/roxygen2/version: 8.1.0

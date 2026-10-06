@@ -85,7 +85,7 @@ dep_fix("stringr", "1.5.0", dry_run = TRUE)
 dep_fix("stringr", "1.5.0")
 ```
 
-See the [vignette](https://cran.r-project.org/web/packages/depguard/vignettes/kaggle-colab-workflow.html)
+See the [vignette](https://CRAN.R-project.org/package=depguard)
 for the full walkthrough, or run `vignette("kaggle-colab-workflow")` locally.
 
 ## Scope

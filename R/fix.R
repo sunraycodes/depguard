@@ -9,9 +9,10 @@
 #' Three backends are supported. With `method = "auto"` the first one
 #' available is used: `pak`, then `remotes` (both in Suggests), then
 #' `"archive"`, which needs nothing beyond base R: it downloads the source
-#' tarball from the CRAN archive and installs it. (Source installs of
-#' packages with compiled code need a compiler toolchain on Windows and
-#' macOS; on Kaggle/Colab-style Linux images this is normally present.)
+#' tarball from the CRAN archive and installs it. (Installing from source
+#' needs Rtools on Windows, and the Xcode command line tools on macOS if the
+#' package contains compiled code; Kaggle/Colab-style Linux images normally
+#' have what is needed.)
 #'
 #' With `method = "auto"`, if the chosen backend fails (for example because
 #' the internet is flaky), `dep_fix()` falls back to the archive backend
@@ -75,7 +76,7 @@ dep_fix <- function(package, version,
   )
 
   if (!is.na(current) && identical(current, version) &&
-      identical(ip[match(package, ip[, "Package"]), "LibPath"], normalizePath(lib, mustWork = FALSE))) {
+      same_path(ip[match(package, ip[, "Package"]), "LibPath"], lib)) {
     cli::cli_alert_success("{package} is already at {version}.")
     return(invisible(TRUE))
   }

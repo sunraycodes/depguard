@@ -54,5 +54,5 @@ test_that("dep_env warns when no library is writable", {
 
 test_that("first_writable_lib prefers the first writable path", {
   lib <- local_test_lib()
-  expect_equal(first_writable_lib(), lib)
+  expect_true(same_path(first_writable_lib(), lib))
 })

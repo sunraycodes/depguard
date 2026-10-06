@@ -48,3 +48,10 @@ default_manifest_path <- function() {
 # Escape braces in user-supplied text before handing it to cli, which would
 # otherwise try to interpolate "{...}".
 cli_escape <- function(x) gsub("}", "}}", gsub("{", "{{", x, fixed = TRUE), fixed = TRUE)
+
+# TRUE when two paths point at the same place, whatever their spelling
+# (slashes vs backslashes on Windows, "a/../b", trailing slashes, ...).
+same_path <- function(a, b) {
+  norm <- function(x) normalizePath(x, winslash = "/", mustWork = FALSE)
+  !is.na(a) & !is.na(b) & norm(a) == norm(b)
+}
