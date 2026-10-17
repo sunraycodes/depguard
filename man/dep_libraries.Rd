@@ -9,8 +9,10 @@ dep_libraries()
 \value{
 Invisibly, a data frame with one row per shadowed copy and columns
 \code{package}, \code{active_library}, \code{active_version}, \code{shadowed_library},
-\code{shadowed_version} and \code{differs} (whether the versions are different).
-It has zero rows when nothing is shadowed.
+\code{shadowed_version}, \code{differs} (whether the versions are different) and
+\code{hidden_newer} (the hidden copy is newer than the one R will load,
+which is the case that usually needs attention). It has zero rows when
+nothing is shadowed.
 }
 \description{
 R searches library paths in order and loads the \emph{first} copy it finds.
@@ -19,6 +21,12 @@ desktops with several libraries, an old copy can shadow the newer one you
 just installed, so \code{packageVersion()} and the version you think you
 installed disagree. This is one of the commonest causes of "I upgraded it
 but nothing changed".
+}
+\details{
+Shadowing is often harmless. Hosted notebook images commonly ship newer
+copies of packages in an earlier library than the ones bundled with R, so
+the \emph{active} copy is the newer one. depguard only raises a warning when
+the opposite happens: an older copy is winning and a newer one is hidden.
 }
 \examples{
 dep_libraries()

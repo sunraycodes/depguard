@@ -1,3 +1,7 @@
+# depguard (development version)
+
+* `dep_libraries()` now warns only when an older copy is running while a newer one is hidden in another library. Shadowing by a newer copy, which is normal on hosted notebook images such as Kaggle, is reported as information. The result gains a `hidden_newer` column.
+
 # depguard 0.2.0
 
 ## Bug fixes

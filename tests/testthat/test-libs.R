@@ -21,6 +21,7 @@ test_that("a package hidden by another library copy is detected, with the right 
   expect_equal(row$active_version, "1.0")
   expect_equal(row$shadowed_version, "2.0")
   expect_true(row$differs)
+  expect_true(row$hidden_newer)
   expect_equal(normalizePath(row$active_library), normalizePath(old_lib))
   expect_message(dep_libraries(), "dgshadow")
 })
@@ -33,4 +34,21 @@ test_that("identical copies in two libraries are not flagged as a conflict", {
   install_test_pkg(b, "dgsame", "1.0")
   r <- suppressMessages(dep_libraries())
   expect_false(r$differs[r$package == "dgsame"])
+})
+
+test_that("a hidden OLDER copy (normal on notebook images) is not a warning", {
+  skip_on_cran()
+  front <- withr::local_tempdir(); back <- withr::local_tempdir()
+  withr::local_libpaths(c(front, back), action = "prefix")
+  install_test_pkg(front, "dgimage", "2.0")   # newer copy wins, like Kaggle's site-library
+  install_test_pkg(back, "dgimage", "1.0")
+
+  r <- suppressMessages(dep_libraries())
+  row <- r[r$package == "dgimage", ]
+  expect_true(row$differs)
+  expect_false(row$hidden_newer)
+
+  msgs <- testthat::capture_messages(dep_libraries())
+  expect_false(any(grepl("OLDER copy", msgs)))
+  expect_true(any(grepl("normal when an image ships", msgs)))
 })
